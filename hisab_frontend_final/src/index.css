@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lato:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #faf6ee;
+  --card: #fffdf8;
+  --ink: #241b14;
+  --ink-soft: #7a6f5e;
+
+  --primary: #a8823d;
+  --primary-dark: #8a6a2f;
+  --secondary: #4a5a6b;
+  --yellow: #d4b06a;
+
+  --due: #7a2f34;
+  --settled: #3d5c45;
+  --advance: #2c4a5e;
+
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Lato', sans-serif;
+  --font-mono: 'Lato', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+#root {
+  min-height: 100vh;
+}
