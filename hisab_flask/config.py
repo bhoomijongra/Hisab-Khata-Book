@@ -9,7 +9,22 @@ class Config:
 
     # Prefer a single DATABASE_URL (used in production, e.g. Railway),
     # otherwise build one from individual DB_* variables (local dev).
-    DATABASE_URL = os.environ.get("DATABASE_URL")
+    DATABASE_URL = (os.environ.get("DATABASE_URL") or "").strip()
+
+    # On Railway, never silently fall back to localhost -- fail with a clear message.
+    if os.environ.get("RAILWAY_ENVIRONMENT"):
+        if not DATABASE_URL:
+            raise RuntimeError(
+                "DATABASE_URL is not set on this Railway service. "
+                "Add DATABASE_URL=${{MySQL.MYSQL_URL}} in the Flask service's Variables tab."
+            )
+        if "${{" in DATABASE_URL:
+            raise RuntimeError(
+                "DATABASE_URL still contains an unresolved reference: "
+                + DATABASE_URL
+                + " -- check that the referenced service name matches your MySQL service exactly."
+            )
+
     if DATABASE_URL:
         # Railway/most hosts give a mysql:// URL; SQLAlchemy needs the
         # pymysql driver named explicitly.
