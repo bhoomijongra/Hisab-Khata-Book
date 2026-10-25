@@ -176,28 +176,78 @@ function App() {
     return valid
   }
 
-  const handleLogin = (e) => {
-    e.preventDefault()
-    if (!validateLoginForm()) return
+  // const handleLogin = (e) => {
+  //   e.preventDefault()
+  //   if (!validateLoginForm()) return
 
-    fetch(`${API_BASE}/api/login/`, {
+  //   fetch(`${API_BASE}/api/login/`, {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ username, password }),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.token) {
+  //         localStorage.setItem('token', data.token)
+  //         localStorage.setItem('username', data.username)
+  //         setToken(data.token)
+  //         setLoggedInUser(data.username)
+  //         showToast(`Welcome back, ${data.username}!`)
+  //       } else {
+  //         setAuthError('Invalid username or password')
+  //       }
+  //     })
+  // }
+
+  
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  if (!validateLoginForm()) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/login/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ username, password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.token) {
-          localStorage.setItem('token', data.token)
-          localStorage.setItem('username', data.username)
-          setToken(data.token)
-          setLoggedInUser(data.username)
-          showToast(`Welcome back, ${data.username}!`)
-        } else {
-          setAuthError('Invalid username or password')
-        }
-      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setAuthError(
+        data.detail ||
+        data.error ||
+        'Login failed. Please check your username and password.'
+      );
+      return;
+    }
+
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+
+      setToken(data.token);
+      setLoggedInUser(data.username);
+
+      showToast(`Welcome back, ${data.username}!`);
+    } else {
+      setAuthError(
+        data.detail ||
+        data.error ||
+        'Login response did not contain a token.'
+      );
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    setAuthError(
+      'Backend se connection nahi ho raha. API URL ya server check karein.'
+    );
   }
+};
+
 
   const handleRegister = (e) => {
     e.preventDefault()
